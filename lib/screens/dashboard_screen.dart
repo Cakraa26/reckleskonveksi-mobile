@@ -1,5 +1,3 @@
-// lib/screens/dashboard_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../utils/constants.dart';
@@ -16,8 +14,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 0;
-  String _filterStatus = 'Semua';
+  int _selectedIndex = 0; // state: tab aktif bottom navigation
+  String _filterStatus = 'Semua'; // state: filter pesanan di tab Pesanan
 
   final List<String> _filterOptions = [
     'Semua',
@@ -27,11 +25,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'Dikirim',
   ];
 
+  // Getter pesanan yang difilter berdasarkan status
   List<OrderModel> get _filteredOrders {
     if (_filterStatus == 'Semua') return DummyData.orders;
-    return DummyData.orders.where((o) => o.statusLabel == _filterStatus).toList();
+    return DummyData.orders
+        .where((o) => o.statusLabel == _filterStatus)
+        .toList();
   }
 
+  // Dialog konfirmasi sebelum logout
   void _showLogoutDialog() {
     showDialog(
       context: context,
@@ -43,14 +45,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           style: GoogleFonts.barlow(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
-            fontSize: 18,
+            fontSize: 17,
           ),
         ),
         content: Text(
-          'Apakah Anda yakin ingin keluar dari aplikasi?',
+          'Apakah Anda yakin ingin keluar?',
           style: GoogleFonts.inter(
             color: AppColors.textSecondary,
-            fontSize: 14,
+            fontSize: 13,
           ),
         ),
         actions: [
@@ -64,21 +66,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
+              // Reset state user di InheritedWidget
               AppState.of(context)?.setUser(null);
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      Navigator.of(context).widget is Navigator
-                          ? const SizedBox()
-                          : const SizedBox(),
-                ),
-                (route) => false,
-              );
+              // Hapus semua route, kembali ke login
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 AppRoutes.login,
-                (route) => false,
+                (r) => false,
               );
             },
             style: ElevatedButton.styleFrom(
@@ -100,7 +94,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildHomeTab(String userName) {
+  // ── TAB 1: HOME ──────────────────────────────────────────────
+  Widget _buildHomeTab() {
+    final user = AppState.of(context)?.currentUser;
+
+    // Hitung statistik dari data dummy
     final pendingCount = DummyData.orders
         .where((o) => o.status == OrderStatus.pending)
         .length;
@@ -110,237 +108,282 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final selesaiCount = DummyData.orders
         .where((o) => o.status == OrderStatus.selesai)
         .length;
+    final kirimCount = DummyData.orders
+        .where((o) => o.status == OrderStatus.kirim)
+        .length;
     final totalRevenue = DummyData.orders
         .where((o) => o.status == OrderStatus.selesai)
         .fold<double>(0, (sum, o) => sum + o.totalPrice);
-    final revenueStr = totalRevenue >= 1000000
-        ? 'Rp ${(totalRevenue / 1000000).toStringAsFixed(0)}jt'
-        : 'Rp ${totalRevenue.toStringAsFixed(0)}';
+    final revenueStr = 'Rp ${(totalRevenue / 1000000).toStringAsFixed(0)}jt';
 
-    return CustomScrollView(
-      slivers: [
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 20),
+
+          // ── KARTU SAMBUTAN USER ──
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: AppColors.accent,
+              borderRadius: BorderRadius.circular(18),
+              // BoxShadow untuk efek kedalaman kartu
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withOpacity(0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
               children: [
-                // Welcome card
+                // Avatar inisial user
                 Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.surface, AppColors.secondary],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.accent.withOpacity(0.2),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.accent.withOpacity(0.1),
-                        blurRadius: 20,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
                   ),
-                  child: Stack(
+                  child: Center(
+                    child: Text(
+                      user?.avatarInitial ?? 'U',
+                      style: GoogleFonts.barlow(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Positioned(
-                        right: -10,
-                        bottom: -10,
-                        child: Icon(
-                          Icons.content_cut,
-                          size: 80,
-                          color: Colors.white.withOpacity(0.04),
+                      Text(
+                        'Selamat datang,',
+                        style: GoogleFonts.inter(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 12,
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: AppColors.accent,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    AppState.of(context)
-                                            ?.currentUser
-                                            ?.avatarInitial ??
-                                        'U',
-                                    style: GoogleFonts.barlow(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Selamat datang,',
-                                      style: GoogleFonts.inter(
-                                        color: AppColors.textSecondary,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    Text(
-                                      userName,
-                                      style: GoogleFonts.barlow(
-                                        color: AppColors.textPrimary,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            '${DummyData.orders.length} Total Pesanan Aktif',
-                            style: GoogleFonts.inter(
-                              color: AppColors.textSecondary,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accent.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  '$pendingCount Perlu Perhatian',
-                                  style: GoogleFonts.inter(
-                                    color: AppColors.accent,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      // Data nama user dari state InheritedWidget
+                      Text(
+                        user?.name ?? 'User',
+                        style: GoogleFonts.barlow(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  'RINGKASAN',
-                  style: GoogleFonts.barlow(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${DummyData.orders.length}',
+                      style: GoogleFonts.barlow(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    Text(
+                      'Total Pesanan',
+                      style: GoogleFonts.inter(
+                        color: Colors.white.withOpacity(0.8),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
+          Text(
+            'STATISTIK PESANAN',
+            style: GoogleFonts.inter(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── GRID 4 STAT CARD ── (GridView dengan shrinkWrap)
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 1.15,
+            children: [
+              StatCard(
+                title: 'Pending',
+                value: '$pendingCount',
+                icon: Icons.hourglass_empty_rounded,
+                color: AppColors.warning,
+                subtitle: 'Menunggu proses',
+              ),
+              StatCard(
+                title: 'Diproses',
+                value: '$prosesCount',
+                icon: Icons.precision_manufacturing_outlined,
+                color: AppColors.info,
+                subtitle: 'Sedang dikerjakan',
+              ),
+              StatCard(
+                title: 'Selesai',
+                value: '$selesaiCount',
+                icon: Icons.check_circle_outline,
+                color: AppColors.success,
+                subtitle: 'Siap dikirim',
+              ),
+              StatCard(
+                title: 'Dikirim',
+                value: '$kirimCount',
+                icon: Icons.local_shipping_outlined,
+                color: const Color(0xFF6A1B9A),
+                subtitle: 'Dalam pengiriman',
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // Kartu total pendapatan - Card dengan rounded corner & shadow
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+            decoration: BoxDecoration(
+              color: AppColors.cardBg,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.divider),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.dark.withOpacity(0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.payments_outlined,
+                    color: AppColors.success,
+                    size: 22,
                   ),
                 ),
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-        ),
-        // Stats grid
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: GridView.count(
-              crossAxisCount: 2,
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.3,
-              children: [
-                StatCard(
-                  title: 'Pending',
-                  value: '$pendingCount',
-                  icon: Icons.schedule,
-                  color: AppColors.warning,
-                  subtitle: 'Menunggu proses',
+                const SizedBox(width: 14),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total Pendapatan',
+                      style: GoogleFonts.inter(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                    Text(
+                      revenueStr,
+                      style: GoogleFonts.inter(
+                        color: AppColors.success,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
                 ),
-                StatCard(
-                  title: 'Diproses',
-                  value: '$prosesCount',
-                  icon: Icons.construction,
-                  color: AppColors.info,
-                  subtitle: 'Sedang dikerjakan',
-                ),
-                StatCard(
-                  title: 'Selesai',
-                  value: '$selesaiCount',
-                  icon: Icons.check_circle_outline,
-                  color: AppColors.success,
-                  subtitle: 'Siap pickup/kirim',
-                ),
-                StatCard(
-                  title: 'Pendapatan',
-                  value: revenueStr,
-                  icon: Icons.payments_outlined,
-                  color: AppColors.gold,
-                  subtitle: 'Order selesai',
+                const Spacer(),
+                Text(
+                  'dari order\nselesai',
+                  textAlign: TextAlign.right,
+                  style: GoogleFonts.inter(
+                    color: AppColors.textHint,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
           ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-            child: Text(
-              'PESANAN TERBARU',
-              style: GoogleFonts.barlow(
-                color: AppColors.textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 2,
+
+          const SizedBox(height: 24),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'PESANAN TERBARU',
+                style: GoogleFonts.inter(
+                  color: AppColors.textSecondary,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.5,
+                ),
               ),
-            ),
+              TextButton(
+                onPressed: () =>
+                    setState(() => _selectedIndex = 1), // pindah ke tab Pesanan
+                style: TextButton.styleFrom(padding: EdgeInsets.zero),
+                child: Text(
+                  'Lihat semua',
+                  style: GoogleFonts.inter(
+                    color: AppColors.accent,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final orders = DummyData.orders.take(5).toList();
-              return OrderCard(order: orders[index]);
-            },
-            childCount: 5,
+          const SizedBox(height: 8),
+
+          // ListView 5 pesanan terbaru - menggunakan ListView.builder
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 5,
+            itemBuilder: (context, index) =>
+                OrderCard(order: DummyData.orders[index]),
           ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 24)),
-      ],
+
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 
+  // ── TAB 2: DAFTAR PESANAN ────────────────────────────────────
   Widget _buildOrdersTab() {
     return Column(
       children: [
-        // Filter chips
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        // Filter chip horizontal scroll
+        Container(
+          color: AppColors.primary,
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
           child: SizedBox(
-            height: 36,
+            height: 34,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: _filterOptions.length,
@@ -348,21 +391,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               itemBuilder: (context, i) {
                 final isSelected = _filterStatus == _filterOptions[i];
                 return GestureDetector(
-                  onTap: () => setState(() => _filterStatus = _filterOptions[i]),
+                  // setState untuk mengubah filter aktif
+                  onTap: () =>
+                      setState(() => _filterStatus = _filterOptions[i]),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.accent
-                          : AppColors.cardBg,
+                      color: isSelected ? AppColors.accent : AppColors.cardBg,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isSelected
                             ? AppColors.accent
-                            : AppColors.textSecondary.withOpacity(0.2),
+                            : AppColors.divider,
                       ),
                     ),
                     child: Text(
@@ -386,46 +429,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: Row(
             children: [
               Text(
-                '${_filteredOrders.length} pesanan',
+                '${_filteredOrders.length} pesanan ditemukan',
                 style: GoogleFonts.inter(
-                  color: AppColors.textSecondary,
+                  color: AppColors.textHint,
                   fontSize: 12,
                 ),
               ),
             ],
           ),
         ),
+        // ListView.builder menampilkan semua pesanan yang difilter
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.only(top: 4, bottom: 24),
+            padding: const EdgeInsets.only(top: 6, bottom: 24),
             itemCount: _filteredOrders.length,
-            itemBuilder: (context, index) {
-              return OrderCard(order: _filteredOrders[index]);
-            },
+            itemBuilder: (ctx, i) => OrderCard(order: _filteredOrders[i]),
           ),
         ),
       ],
     );
   }
 
+  // ── TAB 3: PROFIL USER ───────────────────────────────────────
   Widget _buildProfileTab() {
     final user = AppState.of(context)?.currentUser;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          // Avatar besar dengan initial user
           Container(
-            width: 88,
-            height: 88,
+            width: 84,
+            height: 84,
             decoration: BoxDecoration(
               color: AppColors.accent,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.accent.withOpacity(0.4),
-                  blurRadius: 20,
-                  spreadRadius: 4,
+                  color: AppColors.accent.withOpacity(0.3),
+                  blurRadius: 16,
+                  spreadRadius: 2,
                 ),
               ],
             ),
@@ -434,18 +478,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 user?.avatarInitial ?? 'U',
                 style: GoogleFonts.barlow(
                   color: Colors.white,
-                  fontSize: 32,
+                  fontSize: 30,
                   fontWeight: FontWeight.w800,
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             user?.name ?? '-',
             style: GoogleFonts.barlow(
               color: AppColors.textPrimary,
-              fontSize: 24,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -453,15 +497,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             user?.email ?? '-',
             style: GoogleFonts.inter(
               color: AppColors.textSecondary,
-              fontSize: 14,
+              fontSize: 13,
             ),
           ),
           const SizedBox(height: 6),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.accent.withOpacity(0.15),
+              color: AppColors.accent.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.accent.withOpacity(0.3)),
             ),
             child: Text(
               user?.role ?? '-',
@@ -472,14 +517,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
+
+          const SizedBox(height: 28),
+          const Divider(color: AppColors.divider),
+          const SizedBox(height: 20),
+
+          // Info rows menggunakan widget _ProfileInfoRow
+          _ProfileInfoRow(
+            icon: Icons.business_outlined,
+            label: 'Perusahaan',
+            value: 'Reckles Konveksi',
+          ),
+          const SizedBox(height: 10),
+          _ProfileInfoRow(
+            icon: Icons.location_on_outlined,
+            label: 'Lokasi',
+            value: 'Denpasar, Bali',
+          ),
+          const SizedBox(height: 10),
+          _ProfileInfoRow(
+            icon: Icons.phone_outlined,
+            label: 'Telepon',
+            value: '+62 812-3456-7890',
+          ),
+          const SizedBox(height: 10),
+          _ProfileInfoRow(
+            icon: Icons.calendar_today_outlined,
+            label: 'Bergabung',
+            value: 'Januari 2024',
+          ),
+
           const SizedBox(height: 32),
-          // Info cards
-          _ProfileInfoRow(icon: Icons.business, label: 'Perusahaan', value: 'Reckles Konveksi'),
-          const SizedBox(height: 12),
-          _ProfileInfoRow(icon: Icons.location_on_outlined, label: 'Lokasi', value: 'Malang, Jawa Timur'),
-          const SizedBox(height: 12),
-          _ProfileInfoRow(icon: Icons.phone_outlined, label: 'Telepon', value: '+62 812-3456-7890'),
-          const SizedBox(height: 32),
+
+          // Tombol logout di tab profil
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -488,19 +558,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
               icon: const Icon(Icons.logout, size: 18),
               label: Text(
                 'Logout',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.accent.withOpacity(0.15),
-                foregroundColor: AppColors.accent,
+                backgroundColor: AppColors.accent,
+                foregroundColor: Colors.white,
                 elevation: 0,
-                side: BorderSide(color: AppColors.accent.withOpacity(0.3)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
             ),
           ),
+          const SizedBox(height: 8),
         ],
       ),
     );
@@ -508,21 +581,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = AppState.of(context)?.currentUser;
-    final userName = user?.name ?? 'User';
-
-    final tabs = [
-      _buildHomeTab(userName),
+    // Daftar tab sesuai index bottom navigation
+    final List<Widget> tabs = [
+      _buildHomeTab(),
       _buildOrdersTab(),
       _buildProfileTab(),
     ];
 
     return Scaffold(
       backgroundColor: AppColors.primary,
+      // AppBar dengan judul + tombol logout (Icons.logout)
       appBar: AppBar(
-        backgroundColor: AppColors.secondary,
+        backgroundColor: AppColors.cardBg,
         elevation: 0,
         automaticallyImplyLeading: false,
+        surfaceTintColor: Colors.transparent,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Divider(height: 1, color: AppColors.divider),
+        ),
         title: Row(
           children: [
             Container(
@@ -532,56 +609,42 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: AppColors.accent,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.content_cut, color: Colors.white, size: 18),
+              child: const Icon(
+                Icons.content_cut,
+                color: Colors.white,
+                size: 17,
+              ),
             ),
             const SizedBox(width: 10),
             Text(
-              'RECKLES',
+              'Reckles Konveksi',
               style: GoogleFonts.barlow(
                 color: AppColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
               ),
             ),
           ],
         ),
         actions: [
+          // Tombol logout di AppBar sesuai spesifikasi
           IconButton(
-            icon: const Icon(Icons.notifications_outlined,
-                color: AppColors.textSecondary),
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Tidak ada notifikasi baru',
-                    style: GoogleFonts.inter(color: Colors.white),
-                  ),
-                  backgroundColor: AppColors.cardBg,
-                  behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout, color: AppColors.accent),
+            icon: const Icon(Icons.logout, color: AppColors.accent, size: 22),
             tooltip: 'Logout',
             onPressed: _showLogoutDialog,
           ),
         ],
       ),
+
+      // Body menampilkan tab sesuai _selectedIndex
       body: tabs[_selectedIndex],
+
+      // Bottom Navigation Bar dengan 3 tab
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          color: AppColors.secondary,
-          border: Border(
-            top: BorderSide(
-              color: AppColors.textSecondary.withOpacity(0.1),
-            ),
-          ),
+          color: AppColors.cardBg,
+          border: Border(top: BorderSide(color: AppColors.divider)),
         ),
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
@@ -589,7 +652,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedItemColor: AppColors.accent,
-          unselectedItemColor: AppColors.textSecondary,
+          unselectedItemColor: AppColors.textHint,
           selectedLabelStyle: GoogleFonts.inter(
             fontSize: 11,
             fontWeight: FontWeight.w600,
@@ -618,11 +681,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
+// Widget reusable untuk baris info profil
 class _ProfileInfoRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-
   const _ProfileInfoRow({
     required this.icon,
     required this.label,
@@ -632,36 +695,35 @@ class _ProfileInfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: AppColors.cardBg,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.divider),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.textSecondary, size: 20),
+          Icon(icon, color: AppColors.textSecondary, size: 19),
           const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: GoogleFonts.inter(
-                    color: AppColors.textSecondary,
-                    fontSize: 11,
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: GoogleFonts.inter(
+                  color: AppColors.textHint,
+                  fontSize: 11,
                 ),
-                Text(
-                  value,
-                  style: GoogleFonts.inter(
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.inter(
+                  color: AppColors.textPrimary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,30 +1,34 @@
-// lib/utils/constants.dart
-
 import 'package:flutter/material.dart';
 import '../models/order_model.dart';
 
+// Warna utama aplikasi - light theme dengan tone industri konveksi
 class AppColors {
-  static const Color primary = Color(0xFF1A1A2E);
-  static const Color secondary = Color(0xFF16213E);
-  static const Color accent = Color(0xFFE94560);
-  static const Color accentLight = Color(0xFFFF6B6B);
-  static const Color gold = Color(0xFFFFD700);
-  static const Color surface = Color(0xFF0F3460);
-  static const Color cardBg = Color(0xFF1E293B);
-  static const Color textPrimary = Color(0xFFF1F5F9);
-  static const Color textSecondary = Color(0xFF94A3B8);
-  static const Color success = Color(0xFF22C55E);
-  static const Color warning = Color(0xFFF59E0B);
-  static const Color info = Color(0xFF3B82F6);
-  static const Color white = Colors.white;
+  static const Color primary = Color(0xFFFAF7F2); // krem hangat - kertas/kain
+  static const Color secondary = Color(0xFFF0EBE3); // krem gelap
+  static const Color accent = Color(
+    0xFFD4521A,
+  ); // oranye bata - benang/mesin jahit
+  static const Color accentLight = Color(0xFFE8763F);
+  static const Color dark = Color(0xFF2C1A0E); // coklat tua - kayu/mesin
+  static const Color cardBg = Color(0xFFFFFFFF);
+  static const Color surface = Color(0xFFF5EFE8);
+  static const Color textPrimary = Color(0xFF2C1A0E);
+  static const Color textSecondary = Color(0xFF7A6352);
+  static const Color textHint = Color(0xFFB5A192);
+  static const Color success = Color(0xFF2E7D32);
+  static const Color warning = Color(0xFFE65100);
+  static const Color info = Color(0xFF1565C0);
+  static const Color divider = Color(0xFFE8DDD4);
 }
 
+// Named routes navigasi
 class AppRoutes {
   static const String login = '/login';
   static const String forgotPassword = '/forgot-password';
   static const String dashboard = '/dashboard';
 }
 
+// Kredensial hardcoded untuk keperluan demo/ujian
 class AppCredentials {
   static const String email = 'admin@reckles.com';
   static const String password = 'Admin123';
@@ -32,6 +36,7 @@ class AppCredentials {
   static const String staffPassword = 'Staff123';
 }
 
+// Data dummy pesanan konveksi - minimal 10 item sesuai spesifikasi
 class DummyData {
   static const List<OrderModel> orders = [
     OrderModel(
@@ -56,7 +61,7 @@ class DummyData {
     ),
     OrderModel(
       id: 'ORD-003',
-      clientName: 'Komunitas Bersepeda BCB',
+      clientName: 'Komunitas BCB',
       productType: 'Jersey Sepeda',
       quantity: 80,
       deadline: '25 Jun 2025',
@@ -152,7 +157,7 @@ class DummyData {
       deadline: '1 Agt 2025',
       status: OrderStatus.proses,
       totalPrice: 7200000,
-      description: 'Scrub dokter & perawat, bahan katun combed anti bakteri',
+      description: 'Scrub dokter & perawat, bahan katun anti bakteri',
     ),
   ];
 }

@@ -8,10 +8,11 @@ import 'screens/dashboard_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  // Status bar transparan agar menyatu dengan background light
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark, // icon gelap untuk light theme
     ),
   );
   runApp(const RecklesApp());
@@ -22,18 +23,20 @@ class RecklesApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // AppStateWrapper membungkus MaterialApp agar InheritedWidget mencakup semua route
     return AppStateWrapper(
       child: MaterialApp(
         title: 'Reckles Konveksi',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.dark(
+          colorScheme: ColorScheme.light(
             primary: AppColors.accent,
-            surface: AppColors.secondary,
+            surface: AppColors.primary,
           ),
           scaffoldBackgroundColor: AppColors.primary,
           useMaterial3: true,
         ),
+        // 3 named routes wajib terdaftar di sini
         initialRoute: AppRoutes.login,
         routes: {
           AppRoutes.login: (_) => const LoginScreen(),

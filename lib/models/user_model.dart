@@ -1,10 +1,9 @@
-// lib/models/user_model.dart
-
+// Model data user yang sedang login
 class UserModel {
   final String name;
   final String email;
   final String role;
-  final String avatarInitial;
+  final String avatarInitial; // inisial untuk avatar lingkaran
 
   const UserModel({
     required this.name,
@@ -13,6 +12,7 @@ class UserModel {
     required this.avatarInitial,
   });
 
+  // Factory constructor - mapping email ke profil user
   factory UserModel.fromEmail(String email) {
     if (email == 'admin@reckles.com') {
       return const UserModel(

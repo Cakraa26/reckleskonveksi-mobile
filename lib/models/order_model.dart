@@ -1,7 +1,7 @@
-// lib/models/order_model.dart
-
+// Enum status pesanan - mengikuti alur produksi konveksi
 enum OrderStatus { pending, proses, selesai, kirim }
 
+// Model data pesanan konveksi
 class OrderModel {
   final String id;
   final String clientName;
@@ -23,6 +23,7 @@ class OrderModel {
     required this.description,
   });
 
+  // Getter label status dalam bahasa Indonesia
   String get statusLabel {
     switch (status) {
       case OrderStatus.pending:
