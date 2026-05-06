@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 import '../models/order_model.dart';
 
-// Warna utama aplikasi - light theme dengan tone industri konveksi
+// Palet baru: navy + putih bersih + aksen indigo - tegas & profesional
 class AppColors {
-  static const Color primary = Color(0xFFFAF7F2); // krem hangat - kertas/kain
-  static const Color secondary = Color(0xFFF0EBE3); // krem gelap
-  static const Color accent = Color(
-    0xFFD4521A,
-  ); // oranye bata - benang/mesin jahit
-  static const Color accentLight = Color(0xFFE8763F);
-  static const Color dark = Color(0xFF2C1A0E); // coklat tua - kayu/mesin
+  static const Color primary = Color(0xFFF8F9FB); // abu putih bersih
+  static const Color secondary = Color(0xFFEEF1F6); // abu muda
+  static const Color accent = Color(0xFF1E3A8A); // navy biru tua - tegas
+  static const Color accentLight = Color(0xFF2D4FA3);
+  static const Color accentMid = Color(0xFF3B63C4); // untuk hover/aktif
+  static const Color dark = Color(0xFF0F172A); // hampir hitam
   static const Color cardBg = Color(0xFFFFFFFF);
-  static const Color surface = Color(0xFFF5EFE8);
-  static const Color textPrimary = Color(0xFF2C1A0E);
-  static const Color textSecondary = Color(0xFF7A6352);
-  static const Color textHint = Color(0xFFB5A192);
-  static const Color success = Color(0xFF2E7D32);
-  static const Color warning = Color(0xFFE65100);
-  static const Color info = Color(0xFF1565C0);
-  static const Color divider = Color(0xFFE8DDD4);
+  static const Color surface = Color(0xFFF1F4F9);
+  static const Color textPrimary = Color(0xFF0F172A);
+  static const Color textSecondary = Color(0xFF475569);
+  static const Color textHint = Color(0xFF94A3B8);
+  static const Color success = Color(0xFF15803D);
+  static const Color warning = Color(0xFFB45309);
+  static const Color info = Color(0xFF0369A1);
+  static const Color purple = Color(0xFF6D28D9);
+  static const Color divider = Color(0xFFE2E8F0);
 }
 
-// Named routes navigasi
 class AppRoutes {
   static const String login = '/login';
   static const String forgotPassword = '/forgot-password';
   static const String dashboard = '/dashboard';
 }
 
-// Kredensial hardcoded untuk keperluan demo/ujian
 class AppCredentials {
   static const String email = 'admin@reckles.com';
   static const String password = 'Admin123';
@@ -36,7 +34,6 @@ class AppCredentials {
   static const String staffPassword = 'Staff123';
 }
 
-// Data dummy pesanan konveksi - minimal 10 item sesuai spesifikasi
 class DummyData {
   static const List<OrderModel> orders = [
     OrderModel(

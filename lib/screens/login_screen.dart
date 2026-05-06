@@ -212,10 +212,10 @@ class _LoginScreenState extends State<LoginScreen>
                       vertical: 11,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.08),
+                      color: AppColors.accent.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: AppColors.accent.withOpacity(0.25),
+                        color: AppColors.accent.withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -343,8 +343,8 @@ class _LoginScreenState extends State<LoginScreen>
                       onPressed: _isLoading ? null : _handleLogin,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accent,
-                        disabledBackgroundColor: AppColors.accent.withOpacity(
-                          0.5,
+                        disabledBackgroundColor: AppColors.accent.withValues(
+                          alpha: 0.5,
                         ),
                         elevation: 0,
                         shape: RoundedRectangleBorder(

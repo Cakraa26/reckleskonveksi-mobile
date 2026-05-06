@@ -130,14 +130,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             decoration: BoxDecoration(
               color: AppColors.accent,
               borderRadius: BorderRadius.circular(18),
-              // BoxShadow untuk efek kedalaman kartu
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accent.withOpacity(0.35),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
             ),
             child: Row(
               children: [
@@ -146,7 +138,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -168,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Text(
                         'Selamat datang,',
                         style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.8),
+                          color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 12,
                         ),
                       ),
@@ -199,7 +191,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Text(
                       'Total Pesanan',
                       style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         fontSize: 11,
                       ),
                     ),
@@ -274,7 +266,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               border: Border.all(color: AppColors.divider),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.dark.withOpacity(0.06),
+                  color: AppColors.dark.withValues(alpha: 0.06),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -285,7 +277,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: AppColors.success.withOpacity(0.1),
+                    color: AppColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(
@@ -467,7 +459,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.accent.withOpacity(0.3),
+                  color: AppColors.accent.withValues(alpha: 0.3),
                   blurRadius: 16,
                   spreadRadius: 2,
                 ),
@@ -504,9 +496,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.accent.withOpacity(0.1),
+              color: AppColors.accent.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.accent.withOpacity(0.3)),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.3),
+              ),
             ),
             child: Text(
               user?.role ?? '-',

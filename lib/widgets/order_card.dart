@@ -12,13 +12,13 @@ class OrderCard extends StatelessWidget {
   Color get _statusColor {
     switch (order.status) {
       case OrderStatus.pending:
-        return const Color(0xFFE65100);
+        return const Color(0xFFB45309); // amber tua
       case OrderStatus.proses:
-        return const Color(0xFF1565C0);
+        return const Color(0xFF0369A1); // biru slate
       case OrderStatus.selesai:
-        return const Color(0xFF2E7D32);
+        return const Color(0xFF15803D); // hijau tua
       case OrderStatus.kirim:
-        return const Color(0xFF6A1B9A);
+        return const Color(0xFF6D28D9); // ungu tua
     }
   }
 
@@ -56,7 +56,7 @@ class OrderCard extends StatelessWidget {
         // Shadow agar card terlihat mengambang
         boxShadow: [
           BoxShadow(
-            color: AppColors.dark.withOpacity(0.06),
+            color: AppColors.dark.withValues(alpha: 0.06),
             blurRadius: 8,
             offset: const Offset(0, 3),
           ),
@@ -86,9 +86,11 @@ class OrderCard extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: _statusColor.withOpacity(0.1),
+                    color: _statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: _statusColor.withOpacity(0.3)),
+                    border: Border.all(
+                      color: _statusColor.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

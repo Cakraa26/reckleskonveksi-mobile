@@ -29,7 +29,7 @@ class StatCard extends StatelessWidget {
         // Shadow untuk efek Card
         boxShadow: [
           BoxShadow(
-            color: AppColors.dark.withOpacity(0.07),
+            color: AppColors.dark.withValues(alpha: 0.07),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -44,7 +44,7 @@ class StatCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.12),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, color: color, size: 18),
