@@ -3,15 +3,16 @@ enum OrderStatus { pending, proses, selesai, kirim }
 
 // Model data pesanan konveksi
 class OrderModel {
-  final String id;
-  final String clientName;
-  final String productType;
-  final int quantity;
-  final String deadline;
-  final OrderStatus status;
-  final double totalPrice;
-  final String description;
+  final String id; // ID untuk setiap pesanan
+  final String clientName; // Nama pelanggan
+  final String productType; // Jenis produk. Contoh: Kaos, Hoodie
+  final int quantity; // Jumlah barang yang dipesan
+  final String deadline; // Batas waktu penyelesaian pesanan
+  final OrderStatus status; // Status pesanan menggunakan enum OrderStatus
+  final double totalPrice; // Total harga keseluruhan pesanan
+  final String description; // Deskripsi tambahan. Contoh: warna, jenis sablon
 
+  // required saat membuat object
   const OrderModel({
     required this.id,
     required this.clientName,
@@ -25,7 +26,7 @@ class OrderModel {
 
   // Getter label status dalam bahasa Indonesia
   String get statusLabel {
-    switch (status) {
+    switch (status) { // cek status
       case OrderStatus.pending:
         return 'Pending';
       case OrderStatus.proses:

@@ -14,9 +14,10 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  int _selectedIndex = 0; // state: tab aktif bottom navigation
-  String _filterStatus = 'Semua'; // state: filter pesanan di tab Pesanan
+  int _selectedIndex = 0; // Menyimpan index tab yang sedang aktif
+  String _filterStatus = 'Semua'; // Menyimpan filter status pesanan
 
+  // Daftar pilihan filter status
   final List<String> _filterOptions = [
     'Semua',
     'Pending',
@@ -32,6 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         .where((o) => o.statusLabel == _filterStatus)
         .toList();
   }
+
 
   // Dialog konfirmasi sebelum logout
   void _showLogoutDialog() {
@@ -130,6 +132,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             decoration: BoxDecoration(
               color: AppColors.accent,
               borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withValues(alpha: 0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
             child: Row(
               children: [

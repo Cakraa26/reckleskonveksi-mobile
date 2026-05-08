@@ -12,21 +12,13 @@ class UserModel {
     required this.avatarInitial,
   });
 
-  // Factory constructor - mapping email ke profil user
+ // Factory constructor untuk membuat data admin
   factory UserModel.fromEmail(String email) {
-    if (email == 'admin@reckles.com') {
-      return const UserModel(
-        name: 'Admin Reckles',
-        email: 'admin@reckles.com',
-        role: 'Administrator',
-        avatarInitial: 'AR',
-      );
-    }
-    return UserModel(
-      name: email.split('@').first,
-      email: email,
-      role: 'Staff',
-      avatarInitial: email[0].toUpperCase(),
+    return const UserModel(
+      name: 'Admin Reckles',
+      email: 'admin@reckles.com',
+      role: 'Administrator',
+      avatarInitial: 'AR',
     );
   }
 }
